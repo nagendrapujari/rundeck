@@ -1,0 +1,18 @@
+name: JBossLocalDeployment
+version: 1.0.0
+rundeckPluginVersion: 2.0  # Updated to match Rundeck v5 plugin versioning
+author: Your Name
+providers:
+  - name: jboss-local-deploy
+    service: NodeStep  # Changed to NodeStep as it's more generic and likely to be compatible with v5
+    title: JBoss Local Deployment
+    description: Executes the command jboss-cli.sh via SSH to deploy applications to JBoss
+    plugin-type: script
+    script-file: deployment.sh  # Ensure this is inside your plugin package or on the system
+    script-args: 
+      - ${node.JbossVersion}
+      - ${node.application}
+      - ${option.artifactId}
+      - ${option.version}
+      - ${node.name}
+      - ${option.packing}
