@@ -1,0 +1,74 @@
+<build>
+  <plugins>
+    <!-- Maven Assembly Plugin -->
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-assembly-plugin</artifactId>
+      <version>3.3.0</version>
+      <configuration>
+        <descriptorRefs>
+          <descriptorRef>jar-with-dependencies</descriptorRef>
+        </descriptorRefs>
+        <files>
+          <!-- Include the deployment.sh file from an external path -->
+          <file>
+            <source>/path/to/your/deployment.sh</source>  <!-- Absolute or relative path -->
+            <outputDirectory>/</outputDirectory>  <!-- Place it in the root of the JAR -->
+          </file>
+        </files>
+      </configuration>
+      <executions>
+        <execution>
+          <phase>package</phase>
+          <goals>
+            <goal>single</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+  </plugins>
+</build>
+
+
+
+
+
+
+Option 2: Using Maven Resources Plugin
+Alternatively, if you want to just copy deployment.sh to the target directory (or any other directory), you can use the Maven Resources Plugin.
+
+Update the pom.xml to configure the Resources Plugin:
+
+xml
+Copy
+Edit
+
+<build>
+  <plugins>
+    <!-- Maven Resources Plugin to copy external file -->
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-resources-plugin</artifactId>
+      <version>3.2.0</version>
+      <executions>
+        <execution>
+          <phase>prepare-package</phase>
+          <goals>
+            <goal>copy-resources</goal>
+          </goals>
+          <configuration>
+            <outputDirectory>${project.build.directory}/deployment</outputDirectory>
+            <resources>
+              <resource>
+                <directory>/path/to/your/</directory>  <!-- Directory of deployment.sh -->
+                <includes>
+                  <include>deployment.sh</include>
+                </includes>
+              </resource>
+            </resources>
+          </configuration>
+        </execution>
+      </executions>
+    </plugin>
+  </plugins>
+</build>
