@@ -1,0 +1,37 @@
+#!/bin/sh
+
+if [ "X$1" != "X" ];then
+ export DEBUG="debug"
+fi
+
+binDir=`dirname $0`
+. $binDir/standalone.var
+
+export JBOSS_HOME PROFILE RUN_CONF APPLI_HOME JAVA_OPTS
+
+JBOSS_STATUS=$(ps -efwww | grep [j]ava | grep ${PROFILE} | grep standalone | wc -l)
+if [ ${JBOSS_STATUS} -gt 0 ]
+then
+  echo "Jboss server is already started"
+  exit 0
+fi
+
+${CMD_START_SRV} > ${JBOSS_CONSOLE_LOG} & tail -f ${JBOSS_CONSOLE_LOG} &
+TAIL_PID=$!
+
+count=0
+launched=false
+
+  until [ $count -gt $STARTUP_WAIT ]
+  do
+    grep 'JBAS015874:' ${JBOSS_CONSOLE_LOG} > /dev/null
+    if [ $? -eq 0 ] ; then
+      launched=true
+      kill $TAIL_PID
+      break
+    fi
+    sleep 1
+    let count=$count+1;
+  done
+kill $TAIL_PID
+exit 0
