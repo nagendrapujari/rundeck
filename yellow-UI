@@ -1,4 +1,0 @@
-[2025-11-16T10:38:36,301] ERROR plugins.ScriptPluginProviderLoader [pool-3-thread-1] - Plugin not loaded: Found no yellow-background-theme/plugin.yaml within: /data/Rundeckv5/pre/RundeckV5/libext/yellow-background-theme.zip
-[2025-11-16T10:38:36,307] ERROR plugins.ScriptPluginProviderLoader [pool-3-thread-1] - Plugin not loaded: Found no yellow-background-theme/ dir within file: /data/Rundeckv5/pre/RundeckV5/libext/yellow-background-theme.zip
-[2025-11-16T10:38:36,307] ERROR plugins.ScriptPluginProviderLoader [pool-3-thread-1] - Plugin not loaded: Found no yellow-background-theme/contents or yellow-background-theme/null dir within: /data/Rundeckv5/pre/RundeckV5/libext/yellow-background-theme.zip
-[2025-11-16T10:38:36,308] ERROR plugins.ScriptPluginScanner [pool-3-thread-1] - Skipping plugin file: metadata was invalid: /data/Rundeckv5/pre/RundeckV5/libext/yellow-background-theme.zip: [No metadata]
