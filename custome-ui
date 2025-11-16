@@ -1,0 +1,42 @@
+ unzip -l /data/Rundeckv5/pre/RundeckV5/libext/yellow-background-theme.zip
+Archive:  /data/Rundeckv5/pre/RundeckV5/libext/yellow-background-theme.zip
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+      347  11-16-2025 10:29   plugin.yaml
+        0  11-16-2025 10:45   resources/
+        0  11-16-2025 10:36   resources/css/
+      166  11-16-2025 10:36   resources/css/yellow.css
+---------                     -------
+      513                     4 files
+
+name: yellow-background-theme
+version: 1.0
+rundeckPluginVersion: 1.2
+author: Pujari Nagendra
+providers:
+    - service: UI
+      name: yello-background-theme
+      plugin-type: ui
+      title: "Yellow Background Theme"
+      description: "change UI background to yellow"
+      ui:
+        - pages: '*'
+          styles:
+                - css/yellow.css
+
+
+  cat /tmp/rundeckplugin/yellow-background-theme/resources/css/yellow.css
+body,
+#app,
+.page-body,
+.container,
+.navbar,
+section {
+        background-color: yellow !important;
+}
+
+.card,
+.panel,
+.panel-body {
+        background-color: #fff8b3 !important;
+}
