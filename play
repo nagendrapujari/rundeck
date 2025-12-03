@@ -1,0 +1,93 @@
+- name: Clean directory on ews server
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+     - "{{ installationPath }}/{{ ews_path }}"
+
+- name: Creates directory
+  file:
+   path: "{{ item }}"
+   state: directory
+  with_items:
+   - "{{ installationPath }}/{{ ews_path }}"
+
+- maven_artifact:
+      group_id: '{{ groupid }}'
+      artifact_id: '{{ artifact_ews }}'
+      extension: '{{ packaging }}'
+      classifier: '{{ classifier }}'
+      version: '{{ version_ews }}'
+      repository_url: '{{ url }}/{{ repo }}'
+      username: '{{ user }}'
+      password: '{{ password }}'
+      dest: '{{ installationPath }}'
+      validate_certs: no
+
+- name: Unarchive a EWS package
+  unarchive:
+    src: '{{ installationPath }}/{{ artifact_ews }}-{{ version_ews }}-{{ classifier }}.{{ packaging }}'
+    dest: '{{ installationPath }}'
+    remote_src: yes
+
+- name: Copy ews installation folder
+  shell: mv {{ installationPath }}/{{ version_ews }}-EWS {{ installationPath }}/{{ ews_path }}
+
+- name: Configure a http_{{ application|lower }}.conf in ews server
+  template: src=httpd_EWS.conf dest={{ installationPath }}/{{ ews_path }}/conf
+
+- name: Ensures dirs exists
+  file: path={{ item }} state=directory
+  with_items:
+    - '{{ installationPath }}/{{ ews_path }}/certs'
+
+- name: Configure a httpd.conf in ews server
+  template: src=httpd_{{ version_ews }}.conf dest={{ installationPath }}/{{ ews_path }}/conf
+
+- name: Configure an apachectl in ews server
+  template: src=apachectl dest={{ installationPath }}/{{ ews_path }}/sbin
+
+- name: Configure a security.sh in ews server
+  template: src=security.sh dest={{ installationPath }}/{{ ews_path }}/bin
+
+- name: Changing bin permission in ews server
+  command: chmod -R 755 {{ installationPath }}/{{ ews_path }}/bin
+
+- name: Changing sbin permission in ews server
+  command: chmod -R 755 {{ installationPath }}/{{ ews_path }}/sbin
+
+- name: Execute the script to create Certificates
+  command: sh {{ installationPath }}/{{ ews_path }}/bin/security.sh
+
+- name: Fetch the Certificats from EWS Servers to local
+  run_once: no
+  fetch: src={{ installationPath }}/{{ ews_path }}/certs/EWS-{{ application|upper }}-{{ ansible_facts['nodename']|upper }}.crt  dest=buffer/ flat=yes
+
+
+- name: Rename ews application document root folder
+  command: mv {{ installationPath }}/{{ ews_path }}/VirtualHosts/EWS {{ installationPath }}/{{ ews_path }}/VirtualHosts/{{ application|lower }}
+
+- name: Rename ews configuration file (httpd.conf)
+  command: mv {{ installationPath }}/{{ ews_path }}/conf/httpd_{{ version_ews }}.conf {{ installationPath }}/{{ ews_path }}/conf/httpd.conf
+
+- name: Rename ews configuration file
+  command: mv {{ installationPath }}/{{ ews_path }}/conf/httpd_EWS.conf {{ installationPath }}/{{ ews_path }}/conf/httpd_{{ application|lower }}.conf
+
+- name: Clean files on ews server
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+     - "{{ installationPath }}/{{ artifact_ews }}-{{ version_ews }}-{{ classifier }}.{{ packaging }}"
+
+
+
+
+
+
+
+
+
+
+TASK [install_ews : Copy ews installation folder] ******************************
+fatal: [ews_server]: FAILED! => {"changed": true, "cmd": "mv /data/EWS/8-ROPS/2.4.62-EWS /data/EWS/8-ROPS/HTTP_Server_2.4", "delta": "0:00:00.004310", "end": "2025-12-03 14:29:22.956102", "msg": "non-zero return code", "rc": 1, "start": "2025-12-03 14:29:22.951792", "stderr": "mv: cannot stat '/data/EWS/8-ROPS/2.4.62-EWS': No such file or directory", "stderr_lines": ["mv: cannot stat '/data/EWS/8-ROPS/2.4.62-EWS': No such file or directory"], "stdout": "", "stdout_lines": []}
