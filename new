@@ -1,0 +1,180 @@
+cat httpd_signon.conf
+ 
+<VirtualHost 192.168.25.100:9443>
+    ServerName cert-usignon.pre.ca-cib.com
+    ServerAlias usignon.pre.ca-cib.com usignon.pre.ca.cib
+    DocumentRoot "/data/SIGNON/sng80/apacheCore/VirtualHost/f5/wwwroot"
+    <Directory "/data/SIGNON/sng80/apacheCore/VirtualHost/f5/wwwroot">
+        Options Indexes FollowSymLinks
+        AllowOverride None
+        Require all granted
+    </Directory>
+    LogLevel warn
+
+    RewriteEngine on
+#    RewriteRule ^/$ https://usignon.pre.ca-cib.com [R]
+     RewriteRule ^/$ https://usignon.pre.ca-cib.com/login [R,L]
+
+
+    ProxyPass / https://192.168.25.116:8443/ keepalive=On retry=5
+    ProxyPassReverse  / https://192.168.25.116:8443/
+
+    ErrorLog "|/data/SIGNON/sng80/apacheCore/bin/rotatelogs /data/SIGNON/sng80/apacheCore/VirtualHost/SIGNON/logs/error_%y.%m.%d_%H.%M.%S.log 86400 120"
+    CustomLog "|/data/SIGNON/sng80/apacheCore/bin/rotatelogs /data/SIGNON/sng80/apacheCore/VirtualHost/SIGNON/logs/access_%y.%m.%d_%H.%M.%S.log 86400 120" cacibf5ssl
+    CustomLog "|/data/SIGNON/sng80/apacheCore/bin/rotatelogs /data/SIGNON/sng80/apacheCore/VirtualHost/SIGNON/logs/access_%y.%m.%d_%H.%M.%S.csv 86400 120" cacib-csv
+</VirtualHost>
+
+
+
+==========================================
+
+
+ServerRoot "/data/SIGNON/sng80/apacheCore"
+
+
+Listen 192.168.25.100:9443
+
+LoadModule authn_file_module modules/mod_authn_file.so
+LoadModule authn_core_module modules/mod_authn_core.so
+LoadModule authz_host_module modules/mod_authz_host.so
+LoadModule authz_groupfile_module modules/mod_authz_groupfile.so
+LoadModule authz_user_module modules/mod_authz_user.so
+LoadModule authz_core_module modules/mod_authz_core.so
+LoadModule access_compat_module modules/mod_access_compat.so
+LoadModule auth_basic_module modules/mod_auth_basic.so
+LoadModule socache_shmcb_module modules/mod_socache_shmcb.so
+LoadModule dumpio_module modules/mod_dumpio.so
+LoadModule reqtimeout_module modules/mod_reqtimeout.so
+LoadModule filter_module modules/mod_filter.so
+LoadModule mime_module modules/mod_mime.so
+LoadModule log_config_module modules/mod_log_config.so
+LoadModule unique_id_module modules/mod_unique_id.so
+LoadModule log_forensic_module modules/mod_log_forensic.so
+LoadModule env_module modules/mod_env.so
+LoadModule headers_module modules/mod_headers.so
+LoadModule setenvif_module modules/mod_setenvif.so
+LoadModule proxy_module modules/mod_proxy.so
+LoadModule proxy_connect_module modules/mod_proxy_connect.so
+LoadModule proxy_http_module modules/mod_proxy_http.so
+LoadModule proxy_balancer_module modules/mod_proxy_balancer.so
+LoadModule slotmem_shm_module modules/mod_slotmem_shm.so
+LoadModule lbmethod_byrequests_module modules/mod_lbmethod_byrequests.so
+LoadModule unixd_module modules/mod_unixd.so
+LoadModule dir_module modules/mod_dir.so
+LoadModule alias_module modules/mod_alias.so
+LoadModule rewrite_module modules/mod_rewrite.so
+LoadModule ssl_module modules/mod_ssl.so
+
+<IfModule unixd_module>
+User daemon
+Group daemon
+
+</IfModule>
+
+
+
+
+<Directory />
+    AllowOverride none
+    Require all granted
+</Directory>
+
+
+
+
+
+<IfModule dir_module>
+    DirectoryIndex index.html
+</IfModule>
+
+<Files ".ht*">
+    Require all denied
+</Files>
+
+ErrorLog "logs/error_log"
+
+LogLevel warn
+
+<IfModule log_config_module>
+    LogFormat "%a %t \"%r\" %s %B \"%{Referer}i\" \"%{User-Agent}i\" %{JSESSIONID}C %D" cacib
+    LogFormat "%a %t \"%r\" %s %B \"%{Referer}i\" \"%{User-Agent}i\" %{JSESSIONID}C %D %{SSL_PROTOCOL}x %{SSL_CIPHER}x" cacibssl
+    LogFormat "%a;%t;%r;%s;%B;%{Referer}i;%{JSESSIONID}C;%D" cacib-csv
+    LogFormat "%a %{X-Forwarded-For}i %t \"%r\" %s %B \"%{Referer}i\" \"%{User-Agent}i\" %{JSESSIONID}C %D" cacibf5
+    LogFormat "%a %{X-Forwarded-For}i %t \"%r\" %s %B \"%{Referer}i\" \"%{User-Agent}i\" %{JSESSIONID}C %D %{SSL_PROTOCOL}x %{SSL_CIPHER}x" cacibf5ssl
+    LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
+    LogFormat "%h %l %u %t \"%r\" %>s %b" common
+
+
+    <IfModule logio_module>
+      LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %I %O" combinedio
+    </IfModule>
+
+    CustomLog "logs/access_log" common
+
+</IfModule>
+
+<IfModule alias_module>
+
+
+
+</IfModule>
+
+<IfModule cgid_module>
+</IfModule>
+
+
+<IfModule headers_module>
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains;"
+</IfModule>
+
+<IfModule mime_module>
+    TypesConfig conf/mime.types
+
+    AddType application/x-compress .Z
+    AddType application/x-gzip .gz .tgz
+
+
+
+</IfModule>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<IfModule proxy_html_module>
+</IfModule>
+
+<IfModule ssl_module>
+SSLCipherSuite ECDHE-RSA-AES256-SHA384:AES256-SHA256:HIGH:!3DES:!RC4:!MD5:!aNULL:!EDH:!EXP:!eNULL
+SSLProtocol -ALL  +TLSv1.2
+SSLProxyProtocol -ALL TLSv1.2
+SSLSessionCache        "shmcb:logs/ssl_scache(512000)"
+SSLSessionCacheTimeout  300
+SSLEngine on
+SSLProxyEngine On
+SSLProxyCheckPeerCN off
+SSLProxyCheckPeerName off
+SSLProxyCheckPeerExpire off
+SSLCertificateFile "/data/SIGNON/sng80/apacheCore/certs/pre-signon.crt"
+SSLCertificateKeyFile "/data/SIGNON/sng80/apacheCore/certs/pre-signon.key"
+
+</IfModule>
+TraceEnable off
+Include conf/*httpd_*.conf
+
+error:
+https://192.168.25.116:8443/IdPOAuth2/authorize/partner?client_id=E94EBAC2A524F15B&redirect_uri=https%3A%2F%2Fwww.optimall.pre.ca-cib.com&response_type=code&scope=null&state=26928ca18f9a4da7ad3c6f84a83d47fb&code_challenge=gamMDj542lmmHDPIhkz49IdHe4envxe4N1xZF-y8WUY&code_challenge_method=S256
+
+https://usignon.pre.ca-cib.com/user/auth/d
+
