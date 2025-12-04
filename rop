@@ -1,8 +1,0 @@
-Exception: java.lang.Exception: Server returned an error response: 404 Not Found
-URL: http://10.147.38.244:8080/rundeck-option-provider-service/rops/getOptions?pluginId=ProdVersionROPSPlugin&option=list-nexus&nexusId=calinex.nexus&nexusRepositoryId=cib-efira-releases&groupId=fr.cacib.efira&artifactId=EFIRA-Server-Home&packaging=war
-
-
-http://10.147.38.244:20504/rundeck-option-provider-service/rops/getOptions?pluginId=ProdVersionROPSPlugin&option=list-nexus&nexusId=calinex.nexus&nexusRepositoryId=cib-efira-releases&groupId=fr.cacib.efira&artifactId=EFIRA-Server-Home&packaging=war
-
-
-
